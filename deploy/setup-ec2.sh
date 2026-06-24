@@ -46,20 +46,29 @@ SUBNET_ID=$(aws ec2 describe-subnets \
   --query 'Subnets[0].SubnetId' --output text --region "$REGION")
 echo "Subnet: $SUBNET_ID"
 
-# Create security group
+# Create or reuse security group
 echo "Creating security group..."
-SG_ID=$(aws ec2 create-security-group \
-  --group-name "$SG_NAME" \
-  --description "Rate Limiter Demo - HTTP + SSH" \
-  --vpc-id "$VPC_ID" \
-  --query 'GroupId' --output text --region "$REGION")
+SG_ID=$(aws ec2 describe-security-groups \
+  --filters "Name=group-name,Values=$SG_NAME" "Name=vpc-id,Values=$VPC_ID" \
+  --query 'SecurityGroups[0].GroupId' --output text --region "$REGION" 2>/dev/null)
 
-aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
-  --protocol tcp --port 22 --cidr "${MY_IP}/32" --region "$REGION" >/dev/null
-aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
-  --protocol tcp --port 80 --cidr "0.0.0.0/0" --region "$REGION" >/dev/null
-aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
-  --protocol tcp --port 8080 --cidr "0.0.0.0/0" --region "$REGION" >/dev/null
+if [ "$SG_ID" = "None" ] || [ -z "$SG_ID" ]; then
+  SG_ID=$(aws ec2 create-security-group \
+    --group-name "$SG_NAME" \
+    --description "Rate Limiter Demo - HTTP + SSH" \
+    --vpc-id "$VPC_ID" \
+    --query 'GroupId' --output text --region "$REGION")
+
+  aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
+    --protocol tcp --port 22 --cidr "${MY_IP}/32" --region "$REGION" >/dev/null
+  aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
+    --protocol tcp --port 80 --cidr "0.0.0.0/0" --region "$REGION" >/dev/null
+  aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
+    --protocol tcp --port 8080 --cidr "0.0.0.0/0" --region "$REGION" >/dev/null
+  echo "Security Group created: $SG_ID"
+else
+  echo "Security Group already exists: $SG_ID (reusing)"
+fi
 echo "Security Group: $SG_ID (SSH from $MY_IP, HTTP 80+8080 open)"
 
 # Create key pair
