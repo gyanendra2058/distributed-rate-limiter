@@ -40,10 +40,28 @@ if [ "$VPC_ID" = "None" ] || [ -z "$VPC_ID" ]; then
 fi
 echo "VPC: $VPC_ID"
 
-# Pick a subnet from the default VPC
-SUBNET_ID=$(aws ec2 describe-subnets \
-  --filters "Name=vpc-id,Values=$VPC_ID" "Name=default-for-az,Values=true" \
-  --query 'Subnets[0].SubnetId' --output text --region "$REGION")
+# Pick a subnet in an AZ that supports the requested instance type
+echo "Finding a subnet in an AZ that supports $INSTANCE_TYPE..."
+SUPPORTED_AZS=$(aws ec2 describe-instance-type-offerings \
+  --location-type availability-zone \
+  --filters "Name=instance-type,Values=$INSTANCE_TYPE" \
+  --query 'InstanceTypeOfferings[].Location' --output text --region "$REGION")
+
+SUBNET_ID=""
+for AZ in $SUPPORTED_AZS; do
+  SUBNET_ID=$(aws ec2 describe-subnets \
+    --filters "Name=vpc-id,Values=$VPC_ID" "Name=default-for-az,Values=true" "Name=availability-zone,Values=$AZ" \
+    --query 'Subnets[0].SubnetId' --output text --region "$REGION")
+  if [ -n "$SUBNET_ID" ] && [ "$SUBNET_ID" != "None" ]; then
+    echo "Using AZ: $AZ"
+    break
+  fi
+done
+
+if [ -z "$SUBNET_ID" ] || [ "$SUBNET_ID" = "None" ]; then
+  echo "ERROR: No subnet found in an AZ that supports $INSTANCE_TYPE."
+  exit 1
+fi
 echo "Subnet: $SUBNET_ID"
 
 # Create or reuse security group
@@ -71,8 +89,10 @@ else
 fi
 echo "Security Group: $SG_ID (SSH from $MY_IP, HTTP 80+8080 open)"
 
-# Create key pair
+# Create key pair (delete stale local/remote key if present)
 echo "Creating key pair..."
+aws ec2 delete-key-pair --key-name "$KEY_NAME" --region "$REGION" 2>/dev/null || true
+rm -f "$KEY_FILE"
 aws ec2 create-key-pair \
   --key-name "$KEY_NAME" \
   --query 'KeyMaterial' --output text --region "$REGION" > "$KEY_FILE"
