@@ -21,7 +21,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/rate-limiter-demo",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "redis"
         }
       }
@@ -46,14 +46,14 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/rate-limiter-demo",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "postgres"
         }
       }
     },
     {
       "name": "api",
-      "image": "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/rate-limiter-api:latest",
+      "image": "ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/rate-limiter-api:latest",
       "essential": true,
       "portMappings": [{ "containerPort": 3000 }],
       "environment": [
@@ -66,14 +66,14 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/rate-limiter-demo",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "api"
         }
       }
     },
     {
       "name": "api-gateway",
-      "image": "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/rate-limiter-gateway:latest",
+      "image": "ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/rate-limiter-gateway:latest",
       "essential": true,
       "portMappings": [{ "containerPort": 5000 }],
       "environment": [
@@ -90,14 +90,14 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/rate-limiter-demo",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "gateway"
         }
       }
     },
     {
       "name": "config-service",
-      "image": "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/rate-limiter-config:latest",
+      "image": "ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/rate-limiter-config:latest",
       "essential": true,
       "portMappings": [{ "containerPort": 4000 }],
       "environment": [
@@ -118,14 +118,14 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/rate-limiter-demo",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "config"
         }
       }
     },
     {
       "name": "dashboard",
-      "image": "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/rate-limiter-dashboard:latest",
+      "image": "ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/rate-limiter-dashboard:latest",
       "essential": true,
       "portMappings": [{ "containerPort": 3001 }],
       "environment": [
@@ -142,7 +142,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/rate-limiter-demo",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "dashboard"
         }
       }
@@ -159,7 +159,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/rate-limiter-demo",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "ap-south-1",
           "awslogs-stream-prefix": "prometheus"
         }
       }

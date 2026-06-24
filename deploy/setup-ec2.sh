@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ENV_FILE="$SCRIPT_DIR/.env.ec2"
-REGION="${AWS_REGION:-us-east-1}"
+REGION="${AWS_REGION:-ap-south-1}"
 KEY_NAME="rate-limiter-key"
 KEY_FILE="$SCRIPT_DIR/${KEY_NAME}.pem"
 SG_NAME="rate-limiter-sg"
