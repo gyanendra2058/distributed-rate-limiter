@@ -1,0 +1,33 @@
+services:
+  redis:
+    restart: always
+    volumes:
+      - redis-data:/data
+
+  postgres:
+    restart: always
+
+  api:
+    restart: always
+
+  api-gateway:
+    restart: always
+
+  config-service:
+    restart: always
+
+  dashboard:
+    restart: always
+    ports:
+      - "80:3001"
+
+  nginx:
+    restart: always
+    ports:
+      - "8080:80"
+
+  prometheus:
+    restart: always
+
+volumes:
+  redis-data:

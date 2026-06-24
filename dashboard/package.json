@@ -1,0 +1,13 @@
+{
+  "name": "rate-limiter-dashboard",
+  "version": "1.0.0",
+  "description": "Dashboard for distributed rate limiter demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "http-proxy-middleware": "^3.0.0"
+  }
+}

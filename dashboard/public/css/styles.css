@@ -1,0 +1,85 @@
+.tab-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #94a3b8;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  cursor: pointer;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.tab-btn:hover {
+  color: #e2e8f0;
+}
+
+.tab-btn.active {
+  color: #34d399;
+  border-bottom-color: #34d399;
+}
+
+@keyframes flash-red {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(239, 68, 68, 0.15); }
+}
+
+@keyframes flash-green {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(16, 185, 129, 0.1); }
+}
+
+.flash-reject {
+  animation: flash-red 0.4s ease;
+}
+
+.flash-allow {
+  animation: flash-green 0.3s ease;
+}
+
+.response-box {
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #475569 #1e293b;
+}
+
+.response-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.response-box::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.response-box::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.burst-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  transition: transform 0.1s;
+}
+
+.burst-dot:hover {
+  transform: scale(1.5);
+}
+
+.burst-dot.success { background-color: #34d399; }
+.burst-dot.rejected { background-color: #ef4444; }
+.burst-dot.pending { background-color: #475569; }
+
+.toast {
+  animation: slide-in 0.3s ease;
+}
+
+@keyframes slide-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
