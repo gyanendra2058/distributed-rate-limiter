@@ -17,10 +17,12 @@ app.use('/config', createProxyMiddleware({
   pathRewrite: (path) => '/config' + path,
 }));
 
-app.use('/prometheus', createProxyMiddleware({
-  target: process.env.PROMETHEUS_URL || 'http://prometheus:9090',
-  changeOrigin: true,
-}));
+if (process.env.PROMETHEUS_URL) {
+  app.use('/prometheus', createProxyMiddleware({
+    target: process.env.PROMETHEUS_URL,
+    changeOrigin: true,
+  }));
+}
 
 app.use(express.static(path.join(__dirname, 'public')));
 

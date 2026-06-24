@@ -4,3 +4,7 @@ dist/
 .env.local
 *.log
 .DS_Store
+
+# EC2 deployment secrets
+deploy/.env.ec2
+deploy/*.pem
