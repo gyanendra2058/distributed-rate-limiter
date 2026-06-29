@@ -1,0 +1,14 @@
+services:
+  redis:
+    profiles: ["disabled"]
+
+  api-gateway:
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - RATE_LIMIT_FAIL_OPEN=true
+
+  config-service:
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT:-6379}

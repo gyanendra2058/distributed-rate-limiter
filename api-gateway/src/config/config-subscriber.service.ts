@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
+import { createRedisClient } from '../redis/redis.factory';
 import { getRegisteredEndpoints } from '../gateway/route-config';
 
 export type RefillRateUnit = 'second' | 'minute' | 'hour';
@@ -19,13 +20,8 @@ export class ConfigSubscriberService implements OnModuleInit, OnModuleDestroy {
   private limitsCache = new Map<string, EndpointLimits>();
 
   async onModuleInit() {
-    const redisOpts = {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
-    };
-
-    this.redis = new Redis(redisOpts);
-    this.subscriber = new Redis(redisOpts);
+    this.redis = createRedisClient();
+    this.subscriber = createRedisClient();
 
     await this.loadAllLimits();
 

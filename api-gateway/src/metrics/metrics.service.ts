@@ -5,6 +5,7 @@ import * as client from 'prom-client';
 export class MetricsService implements OnModuleInit {
   private hitsCounter: client.Counter;
   private rejectionsCounter: client.Counter;
+  private checkDuration: client.Histogram;
   private registry: client.Registry;
 
   onModuleInit() {
@@ -27,6 +28,14 @@ export class MetricsService implements OnModuleInit {
       labelNames: ['endpoint'],
       registers: [this.registry],
     });
+
+    this.checkDuration = new client.Histogram({
+      name: 'rate_limit_check_duration_seconds',
+      help: 'Duration of rate limit check (Redis round-trip)',
+      labelNames: ['endpoint'],
+      buckets: [0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1],
+      registers: [this.registry],
+    });
   }
 
   recordHit(endpoint: string) {
@@ -35,6 +44,10 @@ export class MetricsService implements OnModuleInit {
 
   recordRejection(endpoint: string) {
     this.rejectionsCounter.inc({ endpoint });
+  }
+
+  startTimer(endpoint: string): () => void {
+    return this.checkDuration.startTimer({ endpoint });
   }
 
   async getMetrics(): Promise<string> {

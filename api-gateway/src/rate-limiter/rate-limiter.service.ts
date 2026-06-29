@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import Redis from 'ioredis';
+import { createRedisClient } from '../redis/redis.factory';
 
 export interface RateLimitResult {
   allowed: boolean;
@@ -17,10 +18,7 @@ export class RateLimiterService implements OnModuleInit {
   private slidingWindowScript: string;
 
   onModuleInit() {
-    this.redis = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
-    });
+    this.redis = createRedisClient();
 
     this.tokenBucketScript = fs.readFileSync(
       path.join(__dirname, 'lua', 'token-bucket.lua'),

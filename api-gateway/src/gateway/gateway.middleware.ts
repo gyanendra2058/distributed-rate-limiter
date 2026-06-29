@@ -42,6 +42,8 @@ export class GatewayRateLimitMiddleware implements NestMiddleware {
     const algorithm =
       (req.headers['x-rate-limit-algo'] as string) || 'token-bucket';
 
+    const stopTimer = this.metricsService.startTimer(endpoint);
+
     let result;
     if (algorithm === 'sliding-window') {
       result = await this.rateLimiter.checkSlidingWindow(
@@ -59,6 +61,7 @@ export class GatewayRateLimitMiddleware implements NestMiddleware {
       );
     }
 
+    stopTimer();
     this.metricsService.recordHit(endpoint);
 
     if (!result.allowed) {

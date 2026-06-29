@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import Redis from 'ioredis';
+import { createRedisClient } from '../redis/redis.factory';
 import { RateLimitConfigEntity } from './rate-limit-config.entity';
 
 export type RefillRateUnit = 'second' | 'minute' | 'hour';
@@ -29,10 +30,7 @@ export class ConfigService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   async onModuleInit() {
-    this.redis = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
-    });
+    this.redis = createRedisClient();
     await this.seedDefaults();
     await this.warmCache();
   }
